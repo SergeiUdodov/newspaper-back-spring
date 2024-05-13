@@ -27,8 +27,6 @@ public class CommentRestController {
 	@Autowired
 	private CommentService commentService;
 
-	SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
 	@PostMapping("/addComment/{articleId}")
 	public void addComment(@PathVariable long articleId, @RequestBody CrmComment theComment,
 			HttpServletRequest request) {

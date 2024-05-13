@@ -48,17 +48,10 @@ public class ArticleServiceImpl implements ArticleService {
 	public List<Article> findAll(HttpServletRequest request) {
 
 		List<Article> articles = articleDao.findAll();
+		articles.forEach(article -> article.setFormattedDate(formatter.format(article.getDate())));
 		
 		//sorting articles by publication date
-		Comparator<Article> byDate = (first, second) -> {
-			try {
-				return formatter.parse(second.getDate()).compareTo(formatter.parse(first.getDate()));
-			} catch (ParseException e) {
-				
-				e.printStackTrace();
-			}
-			return 0;
-		};
+		Comparator<Article> byDate = (first, second) -> second.getDate().compareTo(first.getDate());
 
 		articles.sort(byDate);
 
@@ -97,7 +90,9 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		
 		//filter to get articles published less than 24 hours ago
-		articles = articles.stream().filter(article -> isArticlePublishedDuringLastDay(article)).collect(Collectors.toList());
+		long currentTimeMilliseconds = new Date().getTime();
+		long oneDayMilliseconds = 24 * 60 * 60 * 1000;
+		articles = articles.stream().filter(article -> currentTimeMilliseconds - article.getDate().getTime() < oneDayMilliseconds).collect(Collectors.toList());
 		
 		return articles;
 	}
@@ -117,19 +112,6 @@ public class ArticleServiceImpl implements ArticleService {
 			}
 			return result;
 		}
-	
-		private boolean isArticlePublishedDuringLastDay(Article article){
-		
-		boolean result = false;
-		
-		try {
-			result = new Date().getTime() - formatter.parse(article.getDate()).getTime() < 24 * 60 * 60 * 1000;
-			}
-		catch(ParseException e) {
-			return result;
-		}
-		return result;
-	}
 
 	@Override
 	@Transactional
@@ -139,11 +121,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 		newArticle.setHeader(theArticle.getHeader());
 		newArticle.setContent(theArticle.getContent());
-
-		Date current = new Date();
-		String currentDate = formatter.format(current);
-		newArticle.setDate(currentDate);
-
+		newArticle.setDate(new Date());
 		newArticle.setImageURL(theArticle.getImageURL());
 
 		List<Theme> themes = extractThemes(theArticle);
@@ -166,11 +144,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 		newArticle.setHeader(theArticle.getHeader());
 		newArticle.setContent(theArticle.getContent());
-
-		Date current = new Date();
-		String currentDate = formatter.format(current);
-		newArticle.setDate(currentDate);
-
+		newArticle.setDate(new Date());
 		newArticle.setImageURL(theArticle.getImageURL());
 
 		List<Theme> themes = extractThemes(theArticle);

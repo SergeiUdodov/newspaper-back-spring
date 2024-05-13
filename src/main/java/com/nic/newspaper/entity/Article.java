@@ -1,5 +1,6 @@
 package com.nic.newspaper.entity;
 
+import java.util.Date;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -34,7 +35,8 @@ public class Article {
 	private String content;
 
 	@Column(name = "date")
-	private String date;
+	private Date date;
+	private String formattedDate;
 
 	@Column(name = "imageURL")
 	private String imageURL;
@@ -51,7 +53,7 @@ public class Article {
 	@JoinTable(name = "articles_themes", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
 	private List<Theme> themes;
 
-	public Article(String header, String content, String date) {
+	public Article(String header, String content, Date date) {
 		this.header = header;
 		this.content = content;
 		this.date = date;
