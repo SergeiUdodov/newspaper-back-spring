@@ -65,11 +65,7 @@ public class CommentServiceImpl implements CommentService {
 		Comment newComment = new Comment();
 
 		newComment.setText(theComment.getText());
-
-		Date current = new Date();
-		String currentDate = formatter.format(current);
-		newComment.setDate(currentDate);
-
+		newComment.setDate(new Date());
 		newComment.setUser(theUser);
 
 		List<Comment> comments = theArticle.getComments();
@@ -115,14 +111,8 @@ public class CommentServiceImpl implements CommentService {
 		}
 
 		//sorting articles by publication date
-		Comparator<Comment> byDate = (first, second) -> {
-			try {
-				return formatter.parse(second.getDate()).compareTo(formatter.parse(first.getDate()));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return 0;
-		};
+		comments.forEach(comment -> comment.setFormattedDate(formatter.format(comment.getDate())));
+		Comparator<Comment> byDate = (first, second) -> second.getDate().compareTo(first.getDate());
 
 		comments.sort(byDate);
 

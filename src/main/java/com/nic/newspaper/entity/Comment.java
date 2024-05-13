@@ -1,5 +1,7 @@
 package com.nic.newspaper.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,13 +31,14 @@ public class Comment {
 	private String text;
 
 	@Column(name = "date")
-	private String date;
+	private Date date;
+	private String formattedDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_comments", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private User user;
 
-	public Comment(String text, String date) {
+	public Comment(String text, Date date) {
 		this.text = text;
 		this.date = date;
 	}
